@@ -97,21 +97,25 @@ opts = odeset('RelTol', 1e-8, 'AbsTol', 1e-10);  % accuracy settings
 
 [t, y] = ode15s(@(t, y) ad_rhs(t, y, p), [0 tEnd], y0, opts);
 
-ax.XColor = 'black'; 
-ax.YColor = 'black';
 
-fig1 = figure('Name', 'Time series', 'Color', 'black');
+fig1 = figure('Name', 'Time series', 'Color', 'w');
 names4 = {'Amyloid-\beta A(t)', 'Tau T(t)', 'Inflammation I(t)', 'Dead neurons D(t)'};
 
+
+
 for k = 1:4
-    subplot(2, 2, k);                            % 2 by 2 grid of plots
-    plot(t, y(:, k), 'LineWidth', 2);            % solution of variable k
-    hold on;
-    % dashed line = the lowest (healthy) equilibrium
+    subplot(2, 2, k); % 2 by 2 grid of plots
+    ax = gca;
+    ax.XColor = 'k';      
+    ax.YColor = 'k'; 
+    plot(t, y(:, k), 'LineWidth', 2); % solution of variable k
+    hold on;  % dashed line = the lowest (healthy) equilibrium
     plot([0 tEnd], [eqs(1, k) eqs(1, k)], 'k--');
-    xlabel('Time (days)');
+    xlabel('Time (days)', 'Color', 'black');
     ylabel(names4{k});
-    title(names4{k});
+    title(names4{k}, 'Color', 'k'); %colour of labels (following lines) and title
+    ax.XColor = 'k';
+    ax.YColor = 'k';
     grid on;
 end
 
@@ -124,7 +128,7 @@ end
 kvals = linspace(0, 3, 301);        % kA1 values to test
 nEq = zeros(1, length(kvals));      % number of equilibria for each kA1
 
-fig2 = figure('Name', 'Bifurcation diagram', 'Color', 'black');
+fig2 = figure('Name', 'Bifurcation diagram', 'Color', 'w');
 hold on;
 
 for i = 1:length(kvals)
@@ -169,12 +173,18 @@ for i = length(kC):-1:1             % going down
     down(i) = yc(1);
 end
 
+
+
 plot(kC, up, 'ko-', 'MarkerFaceColor', 'g', 'MarkerSize', 4);
 plot(kC, down, 'kx-', 'MarkerSize', 6);
-xlabel('k_{A1}');
+xlabel('k_{A1}','Color','k');
 ylabel('Equilibrium amyloid-\beta A^*');
-title('Bifurcation diagram in k_{A1}');
+title('Bifurcation diagram in k_{A1}', 'Color', 'k');
 grid on;
+
+ax = gca;
+ax.XColor = 'k';      
+ax.YColor = 'k'; 
 
 % Dummy points so the legend only has one entry per curve
 h1 = plot(nan, nan, 'b.', 'MarkerSize', 14);
@@ -218,18 +228,22 @@ for i = 1:nMap                          % i = row = KA
     end
 end
 
-fig3 = figure('Name', 'Equilibria map', 'Color', 'black');
+fig3 = figure('Name', 'Equilibria map', 'Color', 'w');
 imagesc(kA1_list, KA_list, countMap);   
 set(gca, 'YDir', 'normal');             
-colorbar;
+colorbar('Color', 'k');
 hold on;
 plot(p.kA1, p.KA, 'wp', 'MarkerFaceColor', 'w', 'MarkerSize', 10);   % baseline
 xlabel('k_{A1}');
 ylabel('K_A');
-title('Number of equilibria (white star = baseline)');
+title('Number of equilibria (white star = baseline)', 'Color', 'k');
 
 fprintf('\n=== Two-parameter map ===\n');
 fprintf('Points with 3 equilibria: %d out of %d\n', sum(countMap(:) == 3), numel(countMap));
+
+ax = gca;
+ax.XColor = 'k';      
+ax.YColor = 'k'; 
 
 % 3 equilibrium points
 
@@ -313,14 +327,30 @@ if haveBistable
             plot(tt, yy(:, 3), 'LineWidth', 1.6, 'DisplayName', sprintf('I(0) = %.3f', I0list(r)));
             subplot(2, 1, 2); hold on;
             plot(tt, yy(:, 1), 'LineWidth', 1.6, 'DisplayName', sprintf('I(0) = %.3f', I0list(r)));
+
+            ax = gca;
+            ax.XColor = 'k';      
+            ax.YColor = 'k'; 
+
         end
         subplot(2, 1, 1);
-        xlabel('Time (days)'); ylabel('I'); grid on; legend('Location', 'northeast');
-        title('Healthy start with extra inflammation');
+        xlabel('Time (days)', 'Color', 'k'); ylabel('I', 'Color', 'k'); grid on; legend('Location', 'northeast');
+        title('Healthy start with extra inflammation','Color','k');
+        ax = gca;
+        ax.XColor = 'k';      
+        ax.YColor = 'k'; 
+
         subplot(2, 1, 2);
         plot([0 tTip], [A_sad A_sad], 'k--', 'DisplayName', 'A of saddle');
         xlabel('Time (days)'); ylabel('A'); grid on;
+
+        ax = gca;
+        ax.XColor = 'k';      
+        ax.YColor = 'k'; 
     end
+
+    
+
 
     % ----- Plot 2: different starting amyloid -----
     if isnan(A0_crit)
@@ -329,7 +359,7 @@ if haveBistable
         A0list = A0_crit * [0.5 0.9 1.1 1.5];
     end
 
-    fig5 = figure('Name', 'Tipping', 'Color', 'black');
+    fig5 = figure('Name', 'Tipping', 'Color', 'w');
     hold on;
     for r = 1:length(A0list)
         start = lowEq;
@@ -340,12 +370,14 @@ if haveBistable
     plot([0 tTip], [A_sad A_sad], 'k--', 'DisplayName', 'A of saddle');
     xlabel('Time (days)');
     ylabel('Amyloid-\beta A(t)');
-    title('Different starting values of A');
+    title('Different starting values of A', 'Color','k');
     legend('Location', 'east');
     grid on;
 end
 
-
+ax = gca;
+ax.XColor = 'k';      
+ax.YColor = 'k'; 
 %% SENSITIVITY ANALYSIS -----------------------------------------------
 % How much does the healthy A* change if one parameter changes a little?
 %    S = (relative change in A*) / (relative change in the parameter)
@@ -385,13 +417,16 @@ end
 
 [~, order] = sort(abs(S), 'descend');       % biggest effect first
 
-fig6 = figure('Name', 'Sensitivity', 'Color', 'black');
+fig6 = figure('Name', 'Sensitivity', 'Color', 'w');
 barh(S(order));
 set(gca, 'YTick', 1:nPar, 'YTickLabel', parNames(order), 'YDir', 'reverse');
 xlabel('Sensitivity of A^*');
-title('Local sensitivity analysis');
+title('Local sensitivity analysis','Color','k');
 grid on;
 
+ax = gca;
+ax.XColor = 'k';      
+ax.YColor = 'k'; 
 
 %% ======================================================================
 %  FUNCTIONS 
